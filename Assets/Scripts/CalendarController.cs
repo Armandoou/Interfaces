@@ -19,9 +19,11 @@ public class CalendarController : MonoBehaviour
     static readonly float[] CellX = { 216, 330, 444, 558, 672, 786 };
     static readonly float[] CellY = { 571, 771, 971 };
     const float CellHalf = 45f;
+    static readonly int[] BookedCellIndices = { 3, 4, 8, 9, 10 };
 
     class Cell
     {
+        public int index;
         public DateTime date;
         public Image sel;
         public TextMeshProUGUI label;
@@ -40,6 +42,14 @@ public class CalendarController : MonoBehaviour
 
     void OnEnable()
     {
+        // Cada vez que entramos en modo Pickup, empezamos de cero.
+        // Así, al volver desde la pantalla de conflicto, no arrastramos
+        // las fechas anteriores.
+        if (mode == Mode.Pickup)
+        {
+            DateSelection.Clear();
+        }
+
         DateSelection.Changed += Refresh;
         Refresh();
     }
@@ -72,7 +82,7 @@ public class CalendarController : MonoBehaviour
         {
             for (int c = 0; c < 6; c++)
             {
-                var cell = new Cell { date = monday.AddDays(r * 7 + c) };
+                var cell = new Cell { date = monday.AddDays(r * 7 + c), index = cells.Count };
                 float cx = CellX[c];
                 float cy = CellY[r];
 
@@ -136,6 +146,31 @@ public class CalendarController : MonoBehaviour
         cbtn.transition = Selectable.Transition.None;
         cbtn.onClick.AddListener(() =>
         {
+
+
+            if (DateSelection.Pickup.HasValue && DateSelection.Drop.HasValue)
+            {
+                DateTime p = DateSelection.Pickup.Value;
+                DateTime d = DateSelection.Drop.Value;
+                bool conflict = false;
+                for (int i = 0; i < cells.Count; i++)
+                {
+                    if (System.Array.IndexOf(BookedCellIndices, i) < 0) continue;
+                    DateTime booked = cells[i].date;
+                    Debug.Log($"[Calendar] Checking cell {i} date={booked:yyyy-MM-dd} booked range=[{p:yyyy-MM-dd} .. {d:yyyy-MM-dd}]");
+                    if (booked >= p && booked <= d)
+                    {
+                        conflict = true;
+                        break;
+                    }
+                }
+                if (conflict)
+                {
+                    manager.Show("19_ConflictedDays");
+                    return;
+                }
+            }
+
             if (manager != null && !string.IsNullOrEmpty(nextScreen)) manager.Show(nextScreen);
         });
     }
@@ -171,6 +206,7 @@ public class CalendarController : MonoBehaviour
 
         foreach (var cell in cells)
         {
+            bool isBooked = System.Array.IndexOf(BookedCellIndices, cell.index) >= 0;
             bool isPickup = p.HasValue && cell.date == p.Value;
             bool isDrop = mode == Mode.Drop && d.HasValue && cell.date == d.Value;
             bool inRange = mode == Mode.Drop && p.HasValue && d.HasValue && cell.date > p.Value && cell.date < d.Value;
@@ -183,6 +219,7 @@ public class CalendarController : MonoBehaviour
 
             if (endpoint) cell.label.color = Color.white;
             else if (disabledDay) cell.label.color = new Color(0.62f, 0.58f, 0.58f);
+            else if (isBooked) cell.label.color = new Color(0.8f, 0.2f, 0.2f);
             else cell.label.color = new Color(0.22f, 0.2f, 0.2f);
         }
 
