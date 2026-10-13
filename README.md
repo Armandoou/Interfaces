@@ -22,10 +22,10 @@ https://www.figma.com/design/ws4gSxqwg8nKgQrwAbZlJL/Sin-t%C3%ADtulo?node-id=0-1&
 GitHub Release:
 https://github.com/Armandoou/Interfaces.git
 Video Link:
-
+https://drive.google.com/drive/folders/1RuLjTNuWMIYVe4ocFh3RCieOIY6LRhQc?usp=sharing
 Ai Report Link:
 https://docs.google.com/document/d/15_TTuSZPlIDK6gG-vsAS_fVatasRWAqBy4qwJKXvy1E/edit?usp=sharing
 Design Report Link:
 https://docs.google.com/document/d/1Wn3MTkllfNMf_lSuWBTmJu950hqxl74Mj_HjLsqJLJI/edit?usp=sharing
 Test Report Link:
-
+https://docs.google.com/document/d/1uq-d5kmqpHdMisMp8zN5UOBWs9VhXf0XIppn3C-eqis/edit?usp=sharing
